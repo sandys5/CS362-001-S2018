@@ -1,9 +1,6 @@
 package calendar;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.LinkedList;
-import java.util.Random;
+import java.util.*;
 
 import org.junit.Test;
 
@@ -54,7 +51,8 @@ public class DataHandlerRandomTest {
 
 			CalDay day = makeCal();
 
-			for(int i=0; i<ValuesGenerator.RandInt(random); i++){
+
+			for(int i=0; i< 10; i++){
 				int startHour=ValuesGenerator.RandInt(random);
 				int startMinute=ValuesGenerator.RandInt(random);
 				int startDay=ValuesGenerator.RandInt(random);;
@@ -64,7 +62,7 @@ public class DataHandlerRandomTest {
 				String description=ValuesGenerator.getString(random);
 
 				//Construct a new Appointment object with the initial data
-				Appt appt = new Appt();
+				Appt appt = new Appt(startDay, startMonth, startYear, title, description, "hey@gmail.com");
 
 				day.addAppt(appt);
 
@@ -79,59 +77,57 @@ public class DataHandlerRandomTest {
 
 			System.out.println("Start testing TimeTable");
 
+			long startTime = Calendar.getInstance().getTimeInMillis();
+			long elapsed = Calendar.getInstance().getTimeInMillis() - startTime;
+
 			long randomseed =System.currentTimeMillis(); //10
 			Random random = new Random(randomseed);
 
-			TimeTable timeTable = new TimeTable();
+			DataHandler timeTable = new DataHandler();
 
 			try {
-				for (int k = 0; k < 100; k++) {
 
-					String methodName = TimeTableRandomTest.randMethod(random);
+					for (int k = 0; k < 100; k++) {
 
-					if (methodName.equals("getApptRange")) {
-						GregorianCalendar firstDay = makeDay();
-						GregorianCalendar lastDay = makeDay();
+						String methodName = DataHandlerRandomTest.randMethod(random);
 
-						while (!firstDay.before(lastDay)) {
-							firstDay = makeDay();
-						}
-						LinkedList<Appt> appts = makeAppts();
+						if (methodName.equals("getApptRange")) {
+							GregorianCalendar firstDay = makeDay();
+							GregorianCalendar lastDay = makeDay();
 
-						LinkedList<CalDay> calDays = timeTable.getApptRange(appts, firstDay, lastDay);
+							while (!firstDay.before(lastDay)) {
+								firstDay = makeDay();
+							}
+							LinkedList<Appt> appts = makeAppts();
 
-						assertTrue(calDays.size() <= appts.size());
+							List<CalDay> calDays = timeTable.getApptRange(firstDay, lastDay);
 
-						for (int i = 0; i < calDays.size(); i++) {
-							for (int j = 0; j < calDays.get(i).getSizeAppts(); j++) {
-								Appt appt = (Appt) calDays.get(i).getAppts().get(j);
-								assertTrue(appt.getValid());
 
-								assertEquals((calDays.get(i)).getYear(), appt.getStartYear());
-								assertEquals((calDays.get(i)).getMonth(), appt.getStartMonth());
-								assertEquals((calDays.get(i)).getDay(), appt.getStartDay());
+							//assertTrue(calDays.size() <= appts.size());
+
+							for (int i = 0; i < calDays.size(); i++) {
+								for (int j = 0; j < calDays.get(i).getSizeAppts(); j++) {
+									Appt appt = (Appt) calDays.get(i).getAppts().get(j);
+									assertTrue(appt.getValid());
+
+									assertEquals((calDays.get(i)).getYear(), appt.getStartYear());
+									assertEquals((calDays.get(i)).getMonth(), appt.getStartMonth());
+									assertEquals((calDays.get(i)).getDay(), appt.getStartDay());
+								}
 							}
 						}
-					} else if (methodName.equals("deleteAppt")) {
+
+						else if (methodName.equals("deleteAppt")) {
 						LinkedList<Appt> appts = makeAppts();
 
-						int randnum = ValuesGenerator.RandInt(random);
-
-						while (randnum > appts.size()) {
-							randnum = ValuesGenerator.RandInt(random);
-						}
+						int randnum = ValuesGenerator.RandInt(random) % 10;
 
 						Appt appt = appts.get(randnum);
-
-						LinkedList<Appt> newAppts = timeTable.deleteAppt(appts, appt);
-
-						assertTrue(newAppts.size() < appts.size());
-
-						for (int i = 0; i < newAppts.size(); i++) {
-							assertTrue(newAppts.get(i) != appt);
+						if(appt.getValid() == false || appt.getXmlElement() == null){
+							assertFalse(timeTable.deleteAppt(appt));
+						}
 						}
 					}
-				}
 			}
 			catch(NullPointerException e){
 

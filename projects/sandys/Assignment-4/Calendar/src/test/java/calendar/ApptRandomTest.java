@@ -51,7 +51,7 @@ public class ApptRandomTest {
    /**
      * Generate Random Tests that tests Appt Class.
      */
-	 @Test
+	/* @Test
 	  public void radnomtest()  throws Throwable  {
 
 		 long startTime = Calendar.getInstance().getTimeInMillis();
@@ -113,10 +113,10 @@ public class ApptRandomTest {
 		}
 	 
 		 System.out.println("Done testing...");
-	 }
+	 }*/
 
 	public static String CUTrand(Random random){
-		String[] methodArray = new String[] {"setValid","setRecurDays"};// The list of the of methods to be tested in the Appt class
+		String[] methodArray = new String[] {"setValid","setRecurDays", "isOn"};// The list of the of methods to be tested in the Appt class
 
 		int n = random.nextInt(methodArray.length);// get a random number between 0 (inclusive) and  methodArray.length (exclusive)
 
@@ -127,6 +127,8 @@ public class ApptRandomTest {
 	public void validTest() throws Throwable{
 		long startTime = Calendar.getInstance().getTimeInMillis();
 		long elapsed = Calendar.getInstance().getTimeInMillis() - startTime;
+
+		//DO ISON METHOD
 
 
 		System.out.println("Start testing Appt");
@@ -141,7 +143,8 @@ public class ApptRandomTest {
 
 
 				//Construct a new Appointment object with the initial data
-				Appt appt = new Appt();
+
+				Appt appt = new Appt(1,2,2000,"appointment","study", "hey@gmail.com");
 
 				//if(!appt.getValid())continue;
 
@@ -150,12 +153,30 @@ public class ApptRandomTest {
 					if (methodName.equals("setValid")){
 						appt.setStartHour(ValuesGenerator.RandInt(random));
 						appt.setStartMinute(ValuesGenerator.RandInt(random));
-						appt.setStartDay(ValuesGenerator.RandInt(random));;
+						appt.setStartDay(ValuesGenerator.RandInt(random));
 						appt.setStartMonth(ValuesGenerator.getRandomIntBetween(random, 1, 11));
 						appt.setStartYear(ValuesGenerator.RandInt(random));
 
-						assertTrue(appt.getValid());
+						if(appt.getStartHour() < 0 || appt.getStartHour() > 23) {
+							assertFalse(appt.getValid());
+						}
 
+						else if(appt.getStartMinute() < 0 || appt.getStartMinute() > 59){
+							assertFalse(appt.getValid());
+						}
+						else if(appt.getStartDay() < 1 ){
+
+							assertFalse(appt.getValid());
+						}
+						else if(appt.getStartDay() > 29 && appt.getStartMonth() == 2){
+							assertFalse(appt.getValid());
+						}
+						else if(appt.getStartMonth() < 1 || appt.getStartMonth() > 12){
+							assertFalse(appt.getValid());
+						}
+						else if(appt.getStartYear() <= 0){
+							assertFalse(appt.getValid());
+						}
 					}
 					else if (methodName.equals("setRecurDays")){
 						int sizeArray=ValuesGenerator.getRandomIntBetween(random, 0, 8);
@@ -166,7 +187,17 @@ public class ApptRandomTest {
 
 						appt.setRecurrence(recurDays, recur, recurIncrement, recurNumber);
 
-						assertArrayEquals(appt.getRecurDays(), recurDays);
+						if(sizeArray == 0){
+							assertTrue(recurDays.length <1);
+						}
+
+					}
+					else if (methodName.equals("isOn")){
+						appt.setStartDay(ValuesGenerator.RandInt(random));;
+						appt.setStartMonth(ValuesGenerator.getRandomIntBetween(random, 1, 11));
+						appt.setStartYear(ValuesGenerator.RandInt(random));
+
+						assertTrue(appt.isOn(appt.getStartDay(),appt.getStartMonth(), appt.getStartYear()));
 					}
 				}
 

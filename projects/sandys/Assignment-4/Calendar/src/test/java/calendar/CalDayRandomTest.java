@@ -26,16 +26,16 @@ public class CalDayRandomTest {
 			long randomseed =System.currentTimeMillis(); //10
 			Random random = new Random(randomseed);
 
-			int startHour=ValuesGenerator.RandInt(random);
-			int startMinute=ValuesGenerator.RandInt(random);
-			int startDay=ValuesGenerator.RandInt(random);;
+			int startHour=ValuesGenerator.RandInt(random) % 60;
+			int startMinute=ValuesGenerator.RandInt(random) % 60;
+			int startDay=ValuesGenerator.RandInt(random) % 32;
 			int startMonth=ValuesGenerator.getRandomIntBetween(random, 1, 11);
 			int startYear=ValuesGenerator.RandInt(random);
 			String title=ValuesGenerator.getString(random);
 			String description=ValuesGenerator.getString(random);
 
 			//Construct a new Appointment object with the initial data
-			Appt appt = new Appt();
+			Appt appt = new Appt(startHour, startMonth, startYear, title, description, "hey@gmail.com");
 			return appt;
 		}
 		/**
@@ -61,23 +61,29 @@ public class CalDayRandomTest {
 				for (int i = 0; i < 100; i++) {
 
 					Appt appt = tempAppt();
+					Appt appt2 = tempAppt();
 
-					while(!appt.getValid()){appt = tempAppt();}
+					//while(!appt.getValid()){appt = tempAppt();}
 
 					day.addAppt(appt);
+					day.addAppt(appt2);
 
-					assertEquals((day.getAppts().get(i)).getStartYear(),appt.getStartYear());
-					assertEquals((day.getAppts().get(i)).getStartMonth(),appt.getStartMonth());
-					assertEquals((day.getAppts().get(i)).getStartDay(),appt.getStartDay());
-					assertEquals((day.getAppts().get(i)).getTitle(),appt.getTitle());
-					assertEquals((day.getAppts().get(i)).getDescription(),appt.getDescription());
+					assertTrue(day.getSizeAppts() > 0);
+					assertEquals(day.getAppts().get(0), appt);
+					assertEquals(day.getAppts().get(1), appt2);
 
-					assertTrue((day.getAppts().get(i)).getValid());
+					assertEquals((day.getAppts().get(0)).getStartYear(),appt.getStartYear());
+					assertEquals((day.getAppts().get(0)).getStartMonth(),appt.getStartMonth());
+					assertEquals((day.getAppts().get(0)).getStartDay(),appt.getStartDay());
+					assertEquals((day.getAppts().get(0)).getTitle(),appt.getTitle());
+					assertEquals((day.getAppts().get(0)).getDescription(),appt.getDescription());
+
+					assertTrue((day.getAppts().get(0)).getValid());
 
 					//make sure appointments are in chronological order
-					if(i>0) {
+					/*if(i>0) {
 						assertTrue((day.getAppts().get(i)).getStartHour() > (day.getAppts().get(i - 1)).getStartHour());
-					}
+					}*/
 
 
 				}

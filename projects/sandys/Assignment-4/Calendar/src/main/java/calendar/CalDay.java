@@ -75,17 +75,20 @@ public class CalDay {
 	 */
 	public void addAppt(Appt appt) {
 		if (appt.getValid()) {
-			for (int i = 0; i < getAppts().size(); i++) {
-				//Put the appointment in the correct order - finish this
-				if (((Appt)getAppts().get(i)).getStartHour() >
-										appt.getStartHour()) {
-					
-					getAppts().add(i, appt);
-					return;
+			if(getSizeAppts() == 0){
+				appts.add(appt);
+			}
+
+			else {
+				for (int i = 0; i < getAppts().size(); i++) {//bug: add 1 to fix FOUND
+					// Put the appointment in the correct order - finish this
+					if (((Appt) getAppts().get(i)).getStartHour() > appt.getStartHour()) {
+						appts.add(i, appt);
+						return;
+					}
 				}
 			}
 		    //The appointment hasn't been added yet, so add it
-		    getAppts().add(appt);
 		}
 	}
 
