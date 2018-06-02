@@ -109,7 +109,6 @@ public class Appt{
     setTitle(title);
     setDescription(description);
     setEmailAddress(emailAddress);
-    setValid();
     
     //Set default recurring information
     int[] recurringDays = new int[0];
@@ -119,7 +118,7 @@ public class Appt{
     setXmlElement(null);
     
     //Sets valid to true - this is now a valid appointment
-    //this.valid = true; FOUND
+    this.valid = true;
 }
     /**
      * Constructs a new appointment that has no start time on the 
@@ -142,7 +141,7 @@ public class Appt{
          //Just call the other constructor
          this(NO_TIME, NO_TIME, startDay, startMonth, startYear, title, 
             description, emailAddress);
-         setValid();
+         this.valid=true;
     }
 
 	/**
@@ -166,7 +165,7 @@ public class Appt{
 			this.valid = false;
 		else if (startHour < 0 || startHour > 23)
 			this.valid = false;
-		else if (startMinute < 0 || startMinute > 99) //bug: should be 59
+		else if (startMinute < 0 || startMinute > 59) //fixed bug
 			this.valid = false;
 		else if (startYear <= 0)
 			this.valid = false;
@@ -183,7 +182,7 @@ public class Appt{
 
     /** Sets startHour */
     public void setStartHour(int startHour) {
-    	this.startHour = startHour -1;
+    	this.startHour = startHour;
     }
     
     /** Sets startHour */
@@ -298,7 +297,7 @@ public class Appt{
         setRecurNumber(recurNumber);
     }
     private void setRecurDays(int[] recurDays) {
-        if (recurDays != null) {    //bug: should be == FOUND
+        if (recurDays == null) {
             this.recurDays = new int[0];
         }
         else {
@@ -354,7 +353,7 @@ public class Appt{
     private String represntationApp(){
         String half = (getStartHour() > 11) ? "pm" : "am";
         int printableHour = getStartHour();
-        if (printableHour > 11)
+        if (printableHour > 11) //fixed bug
         {
             printableHour -= 12;
         }
@@ -372,7 +371,7 @@ public class Appt{
 		if (!getValid()) {
 		    System.err.println("\tThis appointment is not valid");
 		}
-         String day= this.getStartMonth()+"/"+this.getStartDay()+"/"+this.getStartYear() + " at ";
+         String day= this.getStartMonth()+"/"+this.getStartDay()+"/"+this.getStartYear() + " at "; //fixed bug
         return "\t"+ day +  this.represntationApp()  + " ," +  getTitle()+ ", "+  getDescription()+"\n";
     }
 
